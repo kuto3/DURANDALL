@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "lib": [
+      "dom",
+      "dom.iterable",
+      "esnext"
+    ],
+    "allowJs": true,
+    "skipLibCheck": true,
+    "strict": false,
+    "noEmit": true,
+    "incremental": true,
+    "module": "esnext",
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "jsx": "preserve"
+  },
+  "include": [
+    "next-env.d.ts",
+    "**/*.ts",
+    "**/*.tsx"
+, "pages/displaynft.jsx", "pages/createcepages/_app.tsx", "pages/user/[id].jsx", "pages/index.jsx", "pages/item/[id].jsx", "pages/settings/profile.jsx", "pages/test/[id].jsx", "pages/image.jsx", "pages/diplomas/[id].jsx", "pages/api/diplomas/[id].jsx", "pages/Yourcertificates.jsx", "pages/whitelist.jsx", "pages/signup.jsx", "../payment.jsx", "pages/nft-details.jsx", "pages/image.jsx", "pages/idconverter.jsx", "pages/createcertificate.jsx", "pages/create.jsx", "pages/certificate.jsx", "pages/account.jsx", "pages/404.jsx", "pages/_app.jsx", "pages/api/servertest.js"  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
