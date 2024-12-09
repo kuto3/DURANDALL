@@ -30,7 +30,7 @@
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "ethers": "^5.7.2",
-    "express": "^4.21.0",
+    "express": "^4.21.2",
     "FormData": "^0.10.1",
     "formidable": "^3.5.1",
     "fs": "^0.0.1-security",
