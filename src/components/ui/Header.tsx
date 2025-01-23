@@ -222,15 +222,16 @@ const Header = () => {
         <div className={`lg:flex items-center space-x-16 ml-auto hidden ml-9 mr-9`}>
         {renderLink2("/games", "PLAY")}
           {renderLink("/createslotgame", "CREATE")}
-          {renderLink("/pool", "POOL")}
+ 
 
         
        
   
-      
-          </div>
 
+          </div>
+          <div className='mr-7'></div>
           <WalletButton />
+          
        
     {/* Mobile menu button */}
     <div className="lg:hidden ml-auto flex items-center">

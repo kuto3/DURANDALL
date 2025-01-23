@@ -15,6 +15,7 @@ export default function Page({ params }: { params: { id: string } }) {
   const [isInfoVisible, setIsInfoVisible] = useState(false); 
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+
   const id = params.id;
 
   interface SlotMachine {
@@ -261,31 +262,13 @@ export default function Page({ params }: { params: { id: string } }) {
       {isPageLoading ? (
        <div ></div> // Affiche un loader
       ) : (
-        <div className="flex space-x-0 border-4 border-gray-500 p-4 rounded-3xl bg-gray-900 mb-1 mt-3"><SlotMachine
-        initialSpinCount={7}
-        ref={(el) => (machineRefs.current[0] = el)}
-        images={images}
-      />
+        <div className="flex space-x-0 border-4 border-gray-500 p-4 rounded-3xl bg-gray-900 mb-1 mt-3">
       <SlotMachine
-        initialSpinCount={6}
+         initialSpinCounts={[6, 6, 6, 6, 6]} 
         ref={(el) => (machineRefs.current[1] = el)}
         images={images}
       />
-      <SlotMachine
-        initialSpinCount={7}
-        ref={(el) => (machineRefs.current[2] = el)}
-        images={images}
-      />
-      <SlotMachine
-        initialSpinCount={7}
-        ref={(el) => (machineRefs.current[3] = el)}
-        images={images}
-      />
-      <SlotMachine
-        initialSpinCount={0}
-        ref={(el) => (machineRefs.current[4] = el)}
-        images={images}
-      /></div>
+      </div>
       )}
     </div>
           
@@ -331,6 +314,7 @@ export default function Page({ params }: { params: { id: string } }) {
         </div>
         </div>
       </div>
+      
     </div>
     )}
 

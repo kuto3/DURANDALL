@@ -1,88 +1,80 @@
 import React, { useState, forwardRef, useImperativeHandle } from "react";
-
 import Image from "next/image";
 
-// Définition des symboles possibles pour le rouleau
 export const symbols = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
 
-const SlotMachine = forwardRef(({ initialSpinCount, images }, ref) => {
-  const [reel, setReel] = useState(0); // Indice du symbole actuellement visible
-  const [isSpinning, setIsSpinning] = useState(false); // Indicateur de rotation
-  const [spinCount, setSpinCount] = useState(initialSpinCount); // Nombre de crans à tourner
-  const [finalResult, setFinalResult] = useState(null); // Résultat final à afficher
-  const [symbolsList, setSymbolsList] = useState(symbols); // Liste dynamique des symboles
+const SlotMachine = forwardRef(({ initialSpinCounts = [6,6,1,6,1], images }, ref) => {
+  const [reels, setReels] = useState(Array(5).fill(0));
+  const [isSpinning, setIsSpinning] = useState(false);
+  const [spinCounts, setSpinCounts] = useState(initialSpinCounts);
+  const [finalResults, setFinalResults] = useState(Array(5).fill(null));
+  const [symbolsList, setSymbolsList] = useState(symbols);
+  const [isWin, setIsWin] = useState(false);
 
-  // Définir les 10 images à partir de images
-  const [image1, setImage1] = useState(images[0] || "/path/to/defaultImage.png");
-  const [image2, setImage2] = useState(images[1] || "/path/to/defaultImage.png");
-  const [image3, setImage3] = useState(images[2] || "/path/to/defaultImage.png");
-  const [image4, setImage4] = useState(images[3] || "/path/to/defaultImage.png");
-  const [image5, setImage5] = useState(images[4] || "/path/to/defaultImage.png");
-  const [image6, setImage6] = useState(images[5] || "/path/to/defaultImage.png");
-  const [image7, setImage7] = useState(images[6] || "/path/to/defaultImage.png");
-  const [image8, setImage8] = useState(images[7] || "/path/to/defaultImage.png");
-  const [image9, setImage9] = useState(images[8] || "/path/to/defaultImage.png");
-  const [image10, setImage10] = useState(images[9] || "/path/to/defaultImage.png");
-
-
-  // Expose la méthode `spinReel` à l'aide de `useImperativeHandle`
   useImperativeHandle(ref, () => ({
     spinReel,
   }));
 
-  // Fonction pour faire tourner le rouleau
   const spinReel = () => {
-    if (isSpinning) return; // Empêche de faire tourner si déjà en train de tourner
+    if (isSpinning) return;
 
     setIsSpinning(true);
-    setFinalResult(null); // Réinitialiser le résultat final avant chaque tour
-
-    // Remise à zéro du rouleau pour commencer avec le premier symbole
-    setReel(0);
+    setFinalResults(Array(5).fill(null));
+    setReels(Array(5).fill(0));
 
     const totalSymbols = symbolsList.length;
-    const totalCranCount = spinCount; // Nombre de sauts (crans) que l'utilisateur veut
+    let cranCompleted = Array(5).fill(0);
 
-    // Intervalle de défilement avec un délai de 100ms par cran
-    let cranCompleted = 0;
+    const spinIntervals = spinCounts.map((count, index) => {
+      return setInterval(() => {
+        setReels((prevReels) => {
+          const newReels = [...prevReels];
+          newReels[index] += 1;
+          return newReels;
+        });
 
-    const spinInterval = setInterval(() => {
-      setReel((prevReel) => prevReel + 1);
+        cranCompleted[index] += 1;
 
-      cranCompleted += 1;
+        if (cranCompleted[index] % totalSymbols === 0) {
+          setSymbolsList((prevSymbols) => [...prevSymbols, ...symbols]);
+        }
 
-      if (cranCompleted % totalSymbols === 0) {
-        setSymbolsList((prevSymbols) => [...prevSymbols, ...symbols]);
-      }
+        if (cranCompleted[index] > 20 && (cranCompleted[index] + 2) % 10 === count) {
+          clearInterval(spinIntervals[index]);
+          setFinalResults((prevResults) => {
+            const newResults = [...prevResults];
+            newResults[index] = (cranCompleted[index] + 2) % 10;
+            return newResults;
+          });
 
-      if (cranCompleted > 20 && (cranCompleted + 2) % 10 === totalCranCount) {
-        clearInterval(spinInterval);
-        setIsSpinning(false);
-        setFinalResult((cranCompleted + 2) % 10);
-      }
-    }, 100);
+          if (cranCompleted.every((cran, i) => (cran + 2) % 10 === spinCounts[i])) {
+            setIsSpinning(false);
+          }
+        }
+      }, 100);
+    });
   };
 
-  return (
-    <div className="flex items-start">
-    {/* Colonne 1 : Rouleau */}
-    <div className="flex flex-col items-center space-x-2">
+  const renderReel = (reelIndex) => (
+    <div key={reelIndex} className="flex flex-col items-center space-x-2">
       <div className="relative w-56 h-[30rem] bg-gray-800 border-gray-500 overflow-hidden rounded-xl">
         <div
           className="absolute top-0 transition-transform duration-[100ms]"
           style={{
-            transform: `translateY(-${reel * 96}px)`,
+            transform: `translateY(-${reels[reelIndex] * 96}px)`,
           }}
         >
           {Array.from({ length: 35 }).map((_, index) => (
             <div
               key={index}
-              className={`text-4xl text-center  w-56 h-24 overflow-hidden rounded-xl ${
-                index === Math.floor(reel + 2) ? "border-2 border-gray-500" : "border-2 border-gray-500"
+              className={`text-4xl text-center w-56 h-24 overflow-hidden rounded-xl ${
+                index === Math.floor(reels[reelIndex] + 2) && !isSpinning
+                  ? "border-4 animate-borderGlow"
+                  : "border-2 border-gray-500"
               }`}
             >
               <Image
-                src={images[symbolsList[index % symbolsList.length]]} // Utilisation correcte du tableau d'images
+                src={images[symbolsList[index % symbolsList.length]]}
                 width={120}
                 height={120}
                 alt="Image de la machine à sous"
@@ -93,7 +85,12 @@ const SlotMachine = forwardRef(({ initialSpinCount, images }, ref) => {
         </div>
       </div>
     </div>
-  </div>
+  );
+
+  return (
+    <div className="flex items-start space-x-4">
+      {Array.from({ length: 5 }).map((_, index) => renderReel(index))}
+    </div>
   );
 });
 

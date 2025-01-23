@@ -17,3 +17,24 @@ body {
 .wallet-adapter-button {
     font-family: inherit !important;
 }
+
+
+@keyframes borderGlow {
+    0% {
+      border-color: rgba(238, 255, 0, 0.349); /* Couleur initiale */
+      box-shadow: 0 0 10px rgba(255, 255, 0, 0.5);
+    }
+    50% {
+      border-color: rgba(255, 255, 0, 0.603); /* Couleur forte à la moitié */
+      box-shadow: 0 0 20px rgba(255, 255, 0, 1);
+    }
+    100% {
+      border-color: rgb(255, 255, 0); /* Reviens à l'initial */
+      box-shadow: 0 0 10px rgba(255, 255, 0, 0.5);
+    }
+  }
+  
+  /* Applique l'animation à l'élément */
+  .animate-borderGlow {
+    animation: borderGlow 1s infinite; /* 2s pour l'animation et répétition infinie */
+  }
