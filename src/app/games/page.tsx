@@ -1,14 +1,26 @@
-import React from 'react'
-import TEST from '../../components/ui/Diplomalist'
+"use client"
+import React, { useState, useEffect } from 'react';
+import SlotMachineList from '../../components/ui/SmallDiplomalist';
+import SmallGameslist from '../../components/ui/SmallGameslist';
 
 const Yourcertificates = () => {
+
+
+
+
   return (
-  <>
+    <>
+      <div className="p-9 bg-black h-screen flex flex-col justify-center items-center">
 
-    <TEST />
+          <>
+            <SlotMachineList />
+            <SmallGameslist />
+            <div className="h-40"></div>
+          </>
 
+      </div>
     </>
-  )
-}
+  );
+};
 
-export default Yourcertificates
+export default Yourcertificates;

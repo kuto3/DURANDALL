@@ -1,133 +1,131 @@
 import { IncomingForm } from 'formidable';
-import fs from 'fs';
+import fs from 'fs/promises';
 import axios from 'axios';
 import FormData from 'form-data';
 import { PrismaClient } from '@prisma/client';
-import { NextRequest, NextResponse } from 'next/server';
-import { Readable } from 'stream';
-
-// Désactiver le parsing du corps pour gérer les requêtes form-data
-export const config = {
-  api: {
-    bodyParser: false,
-  },
-};
+import { NextResponse } from 'next/server';
 
 const JWT = process.env.JWT;
+const prisma = new PrismaClient();
 
-export async function POST(req: NextRequest) {
-  const prisma = new PrismaClient();
+export async function POST(request: Request) {
   const form = new IncomingForm({ keepExtensions: true });
 
-  // Extract headers
-  const headers = new Headers(req.headers);
-
-  // Convert the request body to a readable stream
-  const readable = Readable.from(req.body);
-
-  return new Promise((resolve, reject) => {
-    form.parse(readable, { headers }, async (err, fields, files) => {
-      if (err) {
-        return NextResponse.json({ error: 'Error parsing the form' }, { status: 500 });
+  try {
+    const formData = await request.formData(); // Use Next.js's formData method
+    
+    // Convert FormData to a format that IncomingForm can parse
+    const body = new Map();
+    for (const [key, value] of formData.entries()) {
+      if (value instanceof File) {
+        // For files, we need to deal with them differently
+        body.set(key, {
+          filepath: await value.arrayBuffer(), // We'll use this later
+          originalFilename: value.name,
+          mimetype: value.type,
+        });
+      } else {
+        // For other fields
+        body.set(key, value);
       }
+    }
+    
+    // Mock the IncomingForm.parse behavior
+    const fields = {};
+    const files = {};
+    for (const [key, value] of body.entries()) {
+      if (value.filepath) {
+        files[key] = [{ 
+          filepath: value.filepath, 
+          originalFilename: value.originalFilename, 
+          mimetype: value.mimetype 
+        }];
+      } else {
+        fields[key] = value;
+      }
+    }
 
-      try {
-        const title = Array.isArray(fields.title) ? fields.title[0] : fields.title;
-        const description = Array.isArray(fields.description) ? fields.description[0] : fields.description;
-        console.log(title);
-        console.log(description);
-        console.log(JWT);
+    const title = fields.title || '';
+    const description = fields.description || '';
+    console.log(title);
+    console.log(description);
+    console.log(JWT);
 
-        // Regrouper toutes les images
-        const imageFiles = [
-          files.logoImage,
-          files.backgroundImage,
-          files.wheelImage0,
-          files.wheelImage1,
-          files.wheelImage2,
-          files.wheelImage3,
-          files.wheelImage4,
-          files.wheelImage5,
-          files.wheelImage6,
-          files.wheelImage7,
-          files.wheelImage8,
-          files.wheelImage9,
-        ].filter(Boolean); // Éliminer les images non définies
+    // Group all images
+    const imageFiles = [
+      files.logoImage?.[0],
+      files.backgroundImage?.[0],
+      ...Array(10).fill().map((_, i) => files[`wheelImage${i}`]?.[0])
+    ].filter(Boolean);
 
-        // Téléverser chaque image sur IPFS
-        const imageUrls = [];
-        for (const imageFile of imageFiles) {
-          const file = Array.isArray(imageFile) ? imageFile[0] : imageFile;
-          if (file && file.filepath) {
-            const formData = new FormData();
-            formData.append('file', fs.createReadStream(file.filepath));
+    // Upload each image to IPFS
+    const imageUrls = [];
+    for (const imageFile of imageFiles) {
+      if (imageFile && imageFile.filepath) {
+        const ipfsFormData = new FormData();
+        ipfsFormData.append('file', Buffer.from(imageFile.filepath), {
+          filename: imageFile.originalFilename,
+          contentType: imageFile.mimetype
+        });
 
-            const response = await axios.post(
-              'https://api.pinata.cloud/pinning/pinFileToIPFS',
-              formData,
-              {
-                headers: {
-                  Authorization: `Bearer ${JWT}`,
-                  ...formData.getHeaders(),
-                },
-              }
-            );
-
-            const imageUrl = `https://gateway.pinata.cloud/ipfs/${response.data.IpfsHash}`;
-            console.log(`Image uploaded to IPFS: ${imageUrl}`);
-            imageUrls.push(imageUrl);
-          }
-        }
-
-        // Créer les métadonnées avec les URLs des images
-        const metadata = {
-          name: title,
-          description,
-          images: imageUrls, // Stocker toutes les URLs des images
-        };
-
-        console.log("Metadata to upload:", metadata);
-
-        // Téléverser les métadonnées sur IPFS
-        const metadataUploadResponse = await axios.post(
-          'https://api.pinata.cloud/pinning/pinJSONToIPFS',
-          metadata,
+        const response = await axios.post(
+          'https://api.pinata.cloud/pinning/pinFileToIPFS',
+          ipfsFormData,
           {
             headers: {
               Authorization: `Bearer ${JWT}`,
+              ...ipfsFormData.getHeaders()
             },
           }
         );
 
-        const metadataUrl = `https://gateway.pinata.cloud/ipfs/${metadataUploadResponse.data.IpfsHash}`;
-        console.log("Metadata uploaded to IPFS at:", metadataUrl);
-
-        try {
-          const slotMachine = await prisma.slotMachine.create({
-            data: {
-              url: metadataUrl,
-            },
-          });
-          console.log("Slot machine record created in database:", slotMachine);
-
-          // Envoyer la réponse avec les URI d'IPFS des images et des métadonnées
-          return NextResponse.json({
-            success: true,
-            imageIpfsUris: imageUrls,
-            metadataUrl,
-            slotMachineId: slotMachine.id
-          }, { status: 200 });
-        } catch (dbError) {
-          console.error("Error saving to database:", dbError);
-          return NextResponse.json({ error: 'An error occurred while saving to the database.' }, { status: 500 });
-        }
-
-      } catch (error) {
-        console.error("Error during the process:", error);
-        return NextResponse.json({ error: 'An error occurred during the metadata publishing process.' }, { status: 500 });
-      } finally {
-        await prisma.$disconnect();
+        const imageUrl = `https://gateway.pinata.cloud/ipfs/${response.data.IpfsHash}`;
+        console.log(`Image uploaded to IPFS: ${imageUrl}`);
+        imageUrls.push(imageUrl);
       }
+    }
+
+    // Create metadata with image URLs
+    const metadata = {
+      name: title,
+      description,
+      images: imageUrls,
+    };
+
+    console.log("Metadata to upload:", metadata);
+
+    // Upload metadata to IPFS
+    const metadataUploadResponse = await axios.post(
+      'https://api.pinata.cloud/pinning/pinJSONToIPFS',
+      metadata,
+      {
+        headers: {
+          Authorization: `Bearer ${JWT}`,
+        },
+      }
+    );
+
+    const metadataUrl = `https://gateway.pinata.cloud/ipfs/${metadataUploadResponse.data.IpfsHash}`;
+    console.log("Metadata uploaded to IPFS at:", metadataUrl);
+
+    // Save to database
+    const slotMachine = await prisma.slotMachine.create({
+      data: {
+        url: metadataUrl,
+      },
     });
-  });
+    console.log("Slot machine record created in database:", slotMachine);
+
+    // Send response
+    return NextResponse.json({ 
+      success: true, 
+      imageIpfsUris: imageUrls, 
+      metadataUrl,
+      slotMachineId: slotMachine.id 
+    }, { status: 200 });
+
+  } catch (error) {
+    console.error("Error during the process:", error);
+    return NextResponse.json({ error: error.message || 'An error occurred during the metadata publishing process.' }, { status: 500 });
+  }
 }

@@ -63,10 +63,10 @@ export default function Pool() {
   };
 
   return (
-    <div className='flex-col bg-black p-9'>
-          <h1>Your Public key is: {publicKey?.toString()}</h1>
-    <div className="flex space-x-8 border-gray-500 justify-center items-center ">
-      <div className="justify-center items-center p-2 ml-5 w-1/3 h-full flex ">
+    <div className='flex-col bg-black p-9 mt-6'>
+
+    <div className="flex space-x-8 w-full border-gray-500 justify-center items-center ">
+      <div className="w-3/5 justify-center items-center p-2 ml-5 w-1/3 h-full flex ">
         <div className="w-full mx-auto p-6 rounded-lg bg-neutral-800 w-full h-[35rem] border-2 border-neutral-700">
         <h2 className="text-2xl font-semibold text-white mt-1">POOL</h2>
           <div className='flex'>
@@ -118,7 +118,7 @@ export default function Pool() {
                 <div className='h-2/5 border-t-2 border-neutral-700 w-full flex'>
                 <div className='w-3/5'></div>
                 <div className='w-2/5 flex'>
-               
+                  
                 <div className='w-4/5 flex justify-center items-center text-sm ml-9'> 222 SOL max</div>
                 <div className='w-1/5  flex justify-center items-center mr-3 mb-1'>
                 <svg width="60%" height="60%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -134,7 +134,7 @@ export default function Pool() {
               {isDeposit && ( <div className="flex justify-end col-span-2">
                 <button
                   type="submit"
-                  className={`px-6 py-2 mt-3 w-full bg-blue-600 hover:bg-blue-900 text-white rounded-lg ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  className={`px-6 py-2 mt-3 w-full bg-purple-700 hover:bg-purple-900 text-white rounded-lg ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
                   disabled={loading}
                 >
                   {loading ? 'Deposit...' : 'DEPOSIT'}
@@ -162,15 +162,7 @@ export default function Pool() {
       </div>
       
       </div>
-      <div className="flex space-x-8 border-gray-500  rounded-2xl justify-center items-center mt-8">
-      <div className="justify-center items-center p-3 ml-5 w-10/12 h-full flex ">
-        <div className="w-full mx-auto p-6 rounded-lg bg-neutral-800 w-full h-[17rem] border-2 border-neutral-700 h-full">
-        <h2 className="text-2xl font-semibold text-white ">POOL INFORMATION</h2>
-         <div className=' bg-neutral-700 flex justify-center items-center rounded-xl h-4/5 mt-3 p-6'><div className='flex-col space-y-3 justify-center items-center'> <div className='text-neutral-400 text-xl'>Actual Liquidity</div><div className='text-neutral-100 text-4xl ml-8'>200K</div></div></div>
-        </div>
-      </div>
 
-      </div>
       <div className='h-12'></div>
       </div>
   );

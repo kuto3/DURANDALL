@@ -4,32 +4,29 @@ import Info from '../components/ui/Info';
 import FAQ from '../components/ui/FAQ';
 import HeroSection from '../components/ui/HeroSection';
 import SmallSlotMachineList from '../components/ui/SmallDiplomalist';
+import SmallGamesList from '../components/ui/SmallGameslist';
 import Link from 'next/link';
 
 
 export default function Page() {
-  return <div className='relative bg-black min-h-screen overflow-hidden p-9'>
-    <div className='p-9'>
-  <div className=" rounded-xl mx-9 bg-[url('/FF.jpg')] opacity-90 " >
+  return  <div className='flex-col bg-black min-h-screen overflow-hidden'>
+    <div className="h-6"></div>
   <HeroSection />
-  </div>
-  <div className='h-6'></div>
-  <div className='flex justify-center mx-9'>
- 
- 
-  </div>
 
-  <SmallSlotMachineList/>
-  <div className="hidden lg:block"> {/* Hide on mobile screens */}
-  </div>
-  <div id="steps" className="h-6"></div>
+
+ 
+  <SmallGamesList />
+  
+  <div id="steps" className="h-20"></div>
   <Info/>
+  <div className="h-6"></div>
   <Documentation/>
+  <div className="h-6"></div>
   <FAQ />
 
   <div className="h-36"></div>
   </div>
-</div>
+
 }
 
 

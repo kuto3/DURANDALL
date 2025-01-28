@@ -6,39 +6,21 @@ import Image from 'next/image';
 import Link from 'next/link';
 import axios from 'axios';
 import {WalletButton} from '../solana/solana-provider'
-
-
 import { AiOutlineMenu } from 'react-icons/ai';
-
-interface Diploma {
-  id: string;
-  title: string;
-  description: string;
-  imageUrl?: string;
-  ipfsUri?: string;
-  hasAccess?: string;
-}
-
-interface User {
-  id: string;
-  username: string;
-  email: string;
-  walletAddress: string;
-  hasAccess?: string;
-  ipfsUri?: string;
-}
+import HeaderVertical from '@/components/ui/HeaderVertical'
+import HeaderVertical2 from '@/components/ui/HeaderVertical2'
 
 const Header = () => {
 
 
   const [searchQuery, setSearchQuery] = useState('');
   const [games, setGames] = useState<Diploma[]>([]);
-  const [users, setUsers] = useState<User[]>([]);
   const [filteredResults, setFilteredResults] = useState<(Diploma | User)[]>([]);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
   const [isScrollingDown, setIsScrollingDown] = useState(false);
   const [lastScrollY, setLastScrollY] = useState(0);
+  const [isHandleVerticalBar, sethandleVerticalBar] = useState(false);
   
 
   const searchRef = useRef<HTMLDivElement | null>(null);
@@ -155,7 +137,7 @@ const Header = () => {
   );
 
   const renderLink2 = (href: string, label: string, onClick?: () => void) => (
-    <Link href={href} className="hover:text-red-600 bg-red-950 border-2 rounded-lg p-2 w-24 border-red-900 text-white font-bold block text-center border-red-900 ml-4 h-10" onClick={onClick}>
+    <Link href={href} className="text-purple-300 hover:text-purple-300 hover:bg-purple-950 bg-purple-800 border-2 rounded-lg p-2 w-24 border-purple-900 text-white font-bold block text-center border-purple-900 ml-4 h-10" onClick={onClick}>
       <div className='w-32 flex justify-center items-center mr-9 mb-3' ><div className=' mr-[3rem] mb-3'>{label}</div></div>
     </Link>
   );
@@ -164,102 +146,184 @@ const Header = () => {
     setShowMenu(false); // Hide the dropdown menu
   };
 
+  const handleVerticalBar = () => {
+    sethandleVerticalBar((prev) => !prev);; // Hide the dropdown menu
+  };
+
   return (
-    <header className={`w-full fixed top-0 left-0 p-6 flex justify-center bg-neutral-900 backdrop-blur-lg z-50 h-24 transition-transform duration-300 ${isScrollingDown ? '-translate-y-full' : 'translate-y-0'}`}>
-      <nav className="flex items-center px-1 mr-6 w-full">
-        {/* Logo positioned to the far left */}
-        <div className={`flex-shrink-0 mr-6`}>
-          <Link href="/">
-            <Image src="/MULTISLOT.png" layout="intrinsic" alt="Logo" height={500} width={500} className="w-32 h-9 mr-1 ml-1" />
-          </Link>
-        </div>
-
-
-
-        {/* Search bar for larger screens */}
-        <div className="hidden lg:flex flex-1 relative" ref={searchRef}>
-          <input
-            type="text"
-            placeholder="Search for games..."
-            value={searchQuery}
-            onClick={() => setIsSearchOpen(true)}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full py-1 px-3 mr-6 border-2 rounded-lg shadow-sm focus:outline-none focus:border-yellow-800 bg-black text-white border-neutral-800"
-          />
-          {isSearchOpen && searchQuery && filteredResults.length > 0 && (
-            <ul className="absolute top-full left-0 w-full bg-black border border-gray-700 rounded-lg mt-2 shadow-lg max-h-40 overflow-y-auto z-10">
-              {filteredResults.map((result) => (
-                <li key={result.id} className="p-2 flex items-center hover:bg-gray-800 cursor-pointer">
-                  <div className="relative w-12 h-12 mr-2">
-                    {'imageUrl' in result && result.imageUrl && result.hasAccess ? (
-                      <Image src={result.imageUrl} layout="fill" objectFit="cover" alt="Image" className="rounded-full" />
-                    ) : (
-                      <ImagePlaceholder ipfsUri={result.ipfsUri} />
-                    )}
-                  </div>
-                  <div className="flex-grow">
-                    {'title' in result ? (
-                      <Link href={`/diplomas/${result.id}`}>
-                        <h3 className="font-semibold text-white">{result.title}</h3>
-                        <p className="text-gray-400">{result.description.length > 100 ? `${result.description.substring(0, 100)}...` : result.description}</p>
-                      </Link>
-                    ) : (
-                      <Link href={`/user/${result.walletAddress}`}>
-                        <h3 className="font-semibold text-white">{result.username}</h3>
-                        <p className="text-gray-400">{result.walletAddress}</p>
-                      </Link>
-                    )}
-                  </div>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-
-
-
-        {/* Navigation links */}
-        <div className={`lg:flex items-center space-x-16 ml-auto hidden ml-9 mr-9`}>
-        {renderLink2("/games", "PLAY")}
-          {renderLink("/createslotgame", "CREATE")}
- 
-
-        
-       
+    <header
+  className={`w-full fixed top-0 left-0 p-6 flex justify-center bg-neutral-900 backdrop-blur-lg z-50 h-24 transition-transform duration-300 `}>
+  {isHandleVerticalBar ? (<HeaderVertical/>) : (<HeaderVertical2/>)}
   
+  <nav className="flex items-center px-1 w-full">
+  {/* Bouton "H" positionné à l'extrême gauche */}
+  {isHandleVerticalBar ? (
+  <button
+  onClick={handleVerticalBar}
+  className="flex justify-center items-center bg-neutral-900 text-white text-lg font-bold w-10 h-10 mt-4 rounded-xl mr-5 mb-3 border-2 border-neutral-700 "
+><svg width="60%" height="60%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+ <path d="M3 3V21M21 12H7M7 12L14 19M7 12L14 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+ </svg>
+</button>) : (<button
+    onClick={handleVerticalBar}
+    className="flex justify-center items-center bg-neutral-900 text-white text-lg font-bold w-10 h-10 mt-4 rounded-xl mr-5 mb-3 border-2 border-neutral-700 "
+  >
+          <svg width="60%" height="60%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+ <path d="M21 21V3M3 12H17M17 12L10 5M17 12L10 19" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+ </svg>
+  </button>)}
+  
+  {/* Logo positionné juste à côté */}
+  <div className="flex-shrink-0  ml-3">
+    <Link href="/">
+      <Image
+        src="/MULTISLOT.png"
+        layout="intrinsic"
+        alt="Logo"
+        height={500}
+        width={500}
+        className="w-32 h-9 mr-1 ml-1"
+      />
+    </Link>
+  </div>
 
-          </div>
-          <div className='mr-7'></div>
-          <WalletButton />
-          
-       
-    {/* Mobile menu button */}
+
+
+    {/* Barre de recherche pour les écrans larges */}
+    <div className="hidden lg:flex flex-1 relative ml-4" ref={searchRef}>
+      <input
+        type="text"
+        placeholder="Search for games..."
+        value={searchQuery}
+        onClick={() => setIsSearchOpen(true)}
+        onChange={(e) => setSearchQuery(e.target.value)}
+        className="w-full py-1 px-3 mr-6 border-2 rounded-lg shadow-sm focus:outline-none focus:border-yellow-800 bg-black text-white border-neutral-800"
+      />
+      {isSearchOpen && searchQuery && filteredResults.length > 0 && (
+        <ul className="absolute top-full left-0 w-full bg-black border border-gray-700 rounded-lg mt-2 shadow-lg max-h-40 overflow-y-auto z-10">
+          {filteredResults.map((result) => (
+            <li
+              key={result.id}
+              className="p-2 flex items-center hover:bg-gray-800 cursor-pointer"
+            >
+              <div className="relative w-12 h-12 mr-2">
+                {'imageUrl' in result && result.imageUrl && result.hasAccess ? (
+                  <Image
+                    src={result.imageUrl}
+                    layout="fill"
+                    objectFit="cover"
+                    alt="Image"
+                    className="rounded-full"
+                  />
+                ) : (
+                  <ImagePlaceholder ipfsUri={result.ipfsUri} />
+                )}
+              </div>
+              <div className="flex-grow">
+                {'title' in result ? (
+                  <Link href={`/diplomas/${result.id}`}>
+                    <h3 className="font-semibold text-white">{result.title}</h3>
+                    <p className="text-gray-400">
+                      {result.description.length > 100
+                        ? `${result.description.substring(0, 100)}...`
+                        : result.description}
+                    </p>
+                  </Link>
+                ) : (
+                  <Link href={`/user/${result.walletAddress}`}>
+                    <h3 className="font-semibold text-white">{result.username}</h3>
+                    <p className="text-gray-400">{result.walletAddress}</p>
+                  </Link>
+                )}
+              </div>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+
+    {/* Liens de navigation */}
+    <div
+      className={`lg:flex items-center space-x-8 ml-auto hidden w-3/12 mr-4`}
+    >
+      <div className='w-3/12'>
+      {renderLink2('/games', 'PLAY')}
+      </div>
+      <div className='w-3/12'>
+      {renderLink('/deposit', 'DEPOSIT')}
+      </div>
+      <div className="flex 'w-6/12 justify-center  items-center">
+      <div className="flex items-center justify-center border-2 border-neutral-700 text-sm h-8 rounded-xl bg-neutral-800 py-5 px-1 pl-1">
+  <div className="p-1">DEPOSIT: 4 SOL</div>
+  <div className="w-2"></div>
+  <button className="h-8 w-8 rounded-lg bg-gradient-to-b from-purple-600 to-purple-900 border-2 border-purple-900 flex justify-center items-center shadow-md hover:shadow-lg hover:from-purple-500 hover:to-purple-800 active:shadow-sm active:translate-y-[1px] transition-all">
+    <svg
+      width="70%"
+      height="70%"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      <path
+        d="M12 5V19M5 12H19"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        className="text-purple-300"
+      />
+    </svg>
+  </button>
+</div>
+
+      </div>
+    </div>
+    <div className='w-2'></div>
+    <WalletButton />
+
+    {/* Bouton du menu mobile */}
     <div className="lg:hidden ml-auto flex items-center">
-          <button onClick={() => setShowMenu(!showMenu)} className="ml-3">
-            <AiOutlineMenu size={26} className="text-white" />
-          </button>
-        </div>
+      <button onClick={() => setShowMenu(!showMenu)} className="ml-3">
+        <AiOutlineMenu size={26} className="text-white" />
+      </button>
+    </div>
 
-        {/* Mobile menu */}
-        {showMenu && (
-          <div className="lg:hidden w-full bg-black text-white p-4 absolute top-full left-0 z-10 h-screen">
-            <Link href="/" className="block mb-3 font-bold text-xl text-center w-full p-3" onClick={handleLinkClick}>
-              HOME
-            </Link>
-            <Link href="/create" className="block mb-3 font-bold text-xl text-center w-full p-3" onClick={handleLinkClick}>
-              CREATE
-            </Link>
-            <Link href="/Yourcertificates" className="block mb-3 font-bold text-xl text-center w-full p-3" onClick={handleLinkClick}>
-              EXPLORE
-            </Link>
-            <Link href="/tutorial" className="block mb-3 font-bold text-xl text-center w-full p-3" onClick={handleLinkClick}>
-              TUTORIAL
-            </Link>
-           
-          </div>
-        )}
-      </nav>
-    </header>
+    {/* Menu mobile */}
+    {showMenu && (
+      <div className="lg:hidden w-full bg-black text-white p-4 absolute top-full left-0 z-10 h-screen">
+        <Link
+          href="/"
+          className="block mb-3 font-bold text-xl text-center w-full p-3"
+          onClick={handleLinkClick}
+        >
+          HOME
+        </Link>
+        <Link
+          href="/create"
+          className="block mb-3 font-bold text-xl text-center w-full p-3"
+          onClick={handleLinkClick}
+        >
+          CREATE
+        </Link>
+        <Link
+          href="/Yourcertificates"
+          className="block mb-3 font-bold text-xl text-center w-full p-3"
+          onClick={handleLinkClick}
+        >
+          EXPLORE
+        </Link>
+        <Link
+          href="/tutorial"
+          className="block mb-3 font-bold text-xl text-center w-full p-3"
+          onClick={handleLinkClick}
+        >
+          TUTORIAL
+        </Link>
+      </div>
+    )}
+  </nav>
+</header>
+
   );
 };
 

@@ -3,7 +3,7 @@ import Link from 'next/link'
 
 const Documentation = () => {
   return (
-    <div className=' p-9'>
+
 <Link href="/createslotgame">
 <article
   className="hover:animate-background rounded-xl bg-neutral-700 p-0.5 shadow-xl transition "
@@ -21,7 +21,7 @@ const Documentation = () => {
 
     <div className="mt-4 flex flex-wrap gap-1">
       <span
-        className="whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs text-white-600 bg-orange-950 text-purple-100 border border-red-500"
+        className="whitespace-nowrap rounded-full px-2.5 py-0.5 text-xs text-white-600 bg-purple-950 text-purple-100 border border-purple-400"
       >
         Win money
       </span>
@@ -29,7 +29,7 @@ const Documentation = () => {
   </div>
 </article>
 </Link>
-    </div>
+
   )
 }
 

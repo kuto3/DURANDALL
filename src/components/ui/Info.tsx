@@ -4,8 +4,7 @@ import Link from 'next/link'
 
 const Info = () => {
   return (
-    <div className="p-9">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 ">
       <article className="rounded-xl m-2 p-0.5 border-2 border-neutral-700 overflow-hidden">
           <div className="rounded-[10px] p-4 !pt-20 sm:p-6 bg-neutral-900 h-96">
             <Image
@@ -19,8 +18,8 @@ const Info = () => {
               Create Your Own Game
             </h3>
             <p className="mt-4 text-sm text-gray-300 text-center">
-              The blockchain ensures the <span className='font-bold text-orange-800' >authenticity</span> of games.<br/><br/> Once registered, you will take a pourcentage by a pool of your game winning
-              <span className='font-bold text-orange-800' > now you will be able to own your own games, your own casino</span> with Multislot and solana, offering unparalleled security and protection against fraud.
+              The blockchain ensures the <span className='font-bold text-purple-800' >authenticity</span> of games.<br/><br/> Once registered, you will take a pourcentage by a pool of your game winning
+              <span className='font-bold text-purple-800' > now you will be able to own your own games, your own casino</span> with Multislot and solana, offering unparalleled security and protection against fraud.
             </p>
           </div>
         </article>
@@ -37,7 +36,7 @@ const Info = () => {
               Play The Game Made By The Community
             </h3>
             <p className="mt-4 text-sm text-gray-300 text-center">
-              A whole community of game maker will make Multislot a great place to have fun and play fair game and solana make this totaly <span className='font-bold text-orange-800' >transparent</span>.
+              A whole community of game maker will make Multislot a great place to have fun and play fair game and solana make this totaly <span className='font-bold text-purple-800' >transparent</span>.
             </p>
           </div>
         </article>
@@ -54,13 +53,12 @@ const Info = () => {
               Win Money
             </h3>
             <p className="mt-4 text-sm text-gray-300 text-center">
-              You will by your own game <span className='font-bold text-orange-800' >win money </span>, <span className='font-bold text-orange-800' > a lot of Slot Machine and more game will come</span>, <span className='font-bold text-orange-800' >
+              You will by your own game <span className='font-bold text-purple-800' >win money </span>, <span className='font-bold text-purple-800' > a lot of Slot Machine and more game will come</span>, <span className='font-bold text-purple-800' >
                 A real community of players and game maker will start</span> but there more to come...
             </p>
           </div>
         </article>
       </div>
-    </div>
   )
 }
 

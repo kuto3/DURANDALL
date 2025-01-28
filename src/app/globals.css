@@ -38,3 +38,61 @@ body {
   .animate-borderGlow {
     animation: borderGlow 1s infinite; /* 2s pour l'animation et répétition infinie */
   }
+
+  .title {
+    font-size: 2.5rem;
+    font-family: "Lobster", cursive;
+  }
+  
+  .wrapper {
+    animation: scroll 10s linear infinite;
+    background: url("https://w0.peakpx.com/wallpaper/343/89/HD-wallpaper-sky-black-stars-night-star-space-edge-super-dark-universe-thumbnail.jpg"),
+      #111111;
+    color: #eee;
+    height: 54vh;
+    min-width: 360px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    perspective: 1000px;
+    perspective-origin: 50% 50%;
+  }
+  
+  @keyframes scroll {
+    100% {
+      background-position: 0px -400%;
+    }
+  }
+  
+  /* Fallback if the operatring system prefers reduced motion*/
+  @media (prefers-reduced-motion) {
+    .wrapper {
+      animation: scroll 10s linear infinite;
+    }
+  }
+  
+  @media (min-width: 670px) {
+    .title {
+      font-size: 5rem;
+    }
+  }
+  .ball {
+    font-size: 1.5em;
+    color: red;
+    position: absolute;
+  }
+  
+  .ballMove0, .ballMove1, .ballMove2, .ballMove3, .ballMove4, .ballMove5 {
+    animation: fall 0.5s linear;
+  }
+  
+  @keyframes fall {
+    from {
+      transform: translateY(-25px);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+

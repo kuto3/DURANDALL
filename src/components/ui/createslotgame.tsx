@@ -23,7 +23,7 @@ export default function CreateSlotMachine() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log("eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee")
+  
     if (!validateForm()) {
       return;
     }
@@ -83,10 +83,9 @@ export default function CreateSlotMachine() {
   
 
   return ( 
-    <div className='h-screen p-4'>
-    <div className='h-6 bg-black'></div>
-    <div className="flex flex-col h-[39rem]">
-      <div className="flex space-x-8 h-screen bg-neutral-900 rounded-2xl ">
+    <div className='h-screen p-9'>
+    <div className="flex flex-col h-[39rem] p-7">
+      <div className="flex space-x-8 h-screen bg-neutral-900 rounded-2xl p-9">
         <div className="justify-center items-center p-2 ml-5 w-1/2 h-full flex ">
           <div className="max-w-4xl mx-auto p-6 rounded-lg bg-neutral-800 w-full h-[33rem] border-2 border-neutral-700">
             
@@ -227,7 +226,7 @@ export default function CreateSlotMachine() {
                   <div className="flex justify-end col-span-2">
                     <button
                       type="submit"
-                      className={`px-6 py-1 mt-3 mr-1 bg-blue-600 border-4 border-blue-800 hover:bg-blue-900 text-white rounded-lg ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
+                      className={`px-6 py-1 mt-3 mr-1 bg-purple-600 border-4 border-purple-800 hover:bg-purple-900 text-white rounded-lg ${loading ? 'opacity-50 cursor-not-allowed' : ''}`}
                       disabled={loading}
                     >
                       {loading ? 'Creation loading...' : 'CREATE'}
