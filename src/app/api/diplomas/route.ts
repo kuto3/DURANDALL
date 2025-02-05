@@ -6,10 +6,10 @@ const prisma = new PrismaClient();
 export async function GET(req: Request) {
   try {
     // Récupération de tous les slotmachines
-    const slotmachines = await prisma.SlotMachine.findMany();
-    console.log(slotmachines);
+    const product = await prisma.Product.findMany();
+    console.log(product);
     // Réponse réussie
-    return new Response(JSON.stringify(slotmachines), {
+    return new Response(JSON.stringify(product), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
     });

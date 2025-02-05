@@ -1,193 +1,120 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from 'react';
-import Link from 'next/link';
-import Image from 'next/image';
+import { useState, useEffect } from "react";
+import Link from "next/link";
+import Image from "next/image";
 
-// Define the type for a slot machine object
 interface SlotMachine {
   id: string;
   url?: string;
+  price?: number;
+  designer?: string;
+  souscategorie?: string;
+  imagesrc1?: string;
+  description?: string;
 }
 
-interface SlotMachineMetadata {
-  name: string;
-  description: string;
-  images: string[];
-}
-
-// Skeleton component for loading state
-// Skeleton component for loading state
 const SkeletonCard = () => (
-  <div className="w-36 h-56 mx-2 bg-neutral-800 rounded-lg shadow-md animate-pulse">
-    {/* Placeholder pour l'image */}
+  <div className="w-full h-96 bg-neutral-800 shadow-md animate-pulse">
     <div className="h-36 w-full rounded-t-lg"></div>
-    {/* Placeholder pour les détails */}
     <div className="p-3 space-y-2">
-      <div className="h-4  rounded w-3/4"></div>
-      <div className="h-4  rounded w-1/2"></div>
-      <div className="h-4 mb-4 rounded w-full"></div>
+      <div className="h-20 rounded w-3/4"></div>
+      <div className="h-4 rounded w-1/2 bg-gray-700"></div>
+      <div className="h-4 mb-4 rounded w-full bg-gray-700"></div>
     </div>
   </div>
 );
 
-
-
-export default function SlotMachineList() {
+export default function SlotMachineList({ name, type, genre, souscategorie, param }) {
   const [slotMachines, setSlotMachines] = useState<SlotMachine[]>([]);
-  const [error, setError] = useState('');
-  const [loadingMetadata, setLoadingMetadata] = useState<{ [id: string]: SlotMachineMetadata }>({});
-  const [isSlotMachinesLoaded, setIsSlotMachinesLoaded] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [currentIndex, setCurrentIndex] = useState(0);
 
   useEffect(() => {
     async function fetchSlotMachines() {
       try {
-        const response = await fetch('/api/diplomas');
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
+        const response = await fetch(
+          `/api/getProductbyName/${name}?type=${type}&genre=${genre}&souscategorie=${souscategorie}`
+        );
+
+        if (!response.ok) throw new Error("Failed to fetch data");
         const data: SlotMachine[] = await response.json();
         setSlotMachines(data);
-        setIsSlotMachinesLoaded(true);
       } catch (err) {
-        console.error('Erreur lors de la récupération des machines à sous:', err);
-        setError('Erreur lors de la récupération des machines à sous');
+        console.error("Error fetching slot machines:", err);
       } finally {
         setLoading(false);
       }
     }
-
     fetchSlotMachines();
-  }, []);
+  }, [name, type]);
 
-  useEffect(() => {
-    const fetchMetadata = async () => {
-      const updatedMetadata: { [id: string]: SlotMachineMetadata } = {};
+  // Tri des machines selon le paramètre de prix
+  const sortedMachines = [...slotMachines].sort((a, b) => {
+    const priceA = a.price || 0;
+    const priceB = b.price || 0;
 
-      for (const machine of slotMachines) {
-        if (machine.url && !loadingMetadata[machine.id]) {
-          try {
-            const response = await fetch(machine.url);
-            if (!response.ok) throw new Error(`Failed to fetch metadata from IPFS: ${response.status}`);
-            const data: SlotMachineMetadata = await response.json();
-            updatedMetadata[machine.id] = data;
-          } catch (error) {
-            console.error(`Erreur lors du chargement des métadonnées pour la machine ${machine.id}`, error);
-          }
-        }
-      }
-
-      setLoadingMetadata((prevMetadata) => ({ ...prevMetadata, ...updatedMetadata }));
-    };
-
-    if (isSlotMachinesLoaded) {
-      fetchMetadata();
+    if (param?.Price === "High to Low") {
+      return priceB - priceA;
     }
-  }, [isSlotMachinesLoaded, slotMachines]);
-
-  // Handle next and previous actions with wrap-around for infinite scrolling
-  const nextCard = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % (slotMachines.length * 0.3));
-  };
-
-  const prevCard = () => {
-    setCurrentIndex((prevIndex) => (prevIndex - 1 + slotMachines.length * 1) % (slotMachines.length * 1));
-  };
-
-  const translateX = () => {
-    return -((currentIndex % slotMachines.length) * 15); // 25% for each card
-  };
-
-  // Render cards in triplicate for the illusion of infinite scrolling
-  const renderCards = () => {
-    let cards = [];
-    for (let i = 0; i < slotMachines.length * 3; i++) { 
-      let index = i % slotMachines.length; 
-      const machine = slotMachines[index];
-      const metadata = loadingMetadata[machine.id]; 
-    
-      cards.push(
-        <div key={i} className="w-36 h-56 flex-none mx-2 ">
-          <Link key={machine.id} href={`/slotgame/${machine.id}`} legacyBehavior>
-            <div className="shadow-md transition-transform transform hover:-translate-y-4 block bg-neutral-800 rounded-lg shadow-md h-56 w-full overflow-hidden relative">
-              <Image
-                className="rounded-t-lg w-full h-full object-cover opacity-80"
-                src={metadata?.images[0] || '/black.png'}
-                width={200}
-                height={200}
-                alt={`Image de ${metadata?.name || `la machine à sous ${machine.id}`}`}
-              />
-              <div className="absolute inset-0 flex items-end justify-center text-white text-lg font-bold">
-                <div className="mb-4">
-                  {metadata?.name || `Machine à sous ${machine.id}`}
-                </div>
-              </div>
-            </div>
-          </Link>
-        </div>
-      );
+    if (param?.Price === "Low to High") {
+      return priceA - priceB;
     }
-    return cards;
-  };
+    return 0;
+  });
 
   return (
-    <div className="bg-black overflow-hidden w-full">
-      <div className='text-3xl font-semibold text-white text-center mt-9 flex'>
-        <div className="flex h-16 justify-start items-center pl-2">
-          <div className='flex'>
-            <svg
-              width="6%"
-              height="6%"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-              className='mt-1'
-            >
-              <path
-                d="M13 2L4.09344 12.6879C3.74463 13.1064 3.57023 13.3157 3.56756 13.4925C3.56524 13.6461 3.63372 13.7923 3.75324 13.8889C3.89073 14 4.16316 14 4.70802 14H12L11 22L19.9065 11.3121C20.2553 10.8936 20.4297 10.6843 20.4324 10.5075C20.4347 10.3539 20.3663 10.2077 20.2467 10.1111C20.1092 10 19.8368 10 19.292 10H12L13 2Z"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-            <div className="ml-3 text-2xl font-bold">COMMUNITY SLOT MACHINES</div>
-          </div>
-        </div>
-        <div className='h-10 mt-4 w-full flex justify-end'>
-          <button
-            className='h-8 w-12 bg-purple-800 hover:bg-purple-950 flex justify-center items-center rounded-lg'
-            onClick={prevCard}
-            style={{ zIndex: 10 }}  // Ensure the button is on top if other elements overlap
-          >
-            <svg width="60%" height="60%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M15 18L9 12L15 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </button>
-          <button
-            className='h-8 w-12 bg-purple-800 hover:bg-purple-950 flex justify-center items-center rounded-lg'
-            onClick={nextCard}
-            style={{ zIndex: 10 }}  // Ensure the button is on top if other elements overlap
-          >
-            <svg width="60%" height="60%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M9 18L15 12L9 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-          </button>
-        </div>
-      </div>
-
-      {error && <p className="text-red-500 text-center">{error}</p>}
-
-      <div className='flex justify-center items-center w-full rounded-xl h-56'>
-      <div className="relative w-full">
-      <div className="flex" style={{ transform: `translateX(${translateX()}%)` }}>
-      {loading ? Array(8).fill(<SkeletonCard />) : renderCards()}
-</div>
-
-    </div>
-
+    <div className="min-h-screen p-6">
+      <h1 className="text-3xl text-neutral-200 font-semibold text-white text-center mb-6"></h1>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 justify-items-center">
+        {loading
+          ? Array(9)
+              .fill(0)
+              .map((_, i) => <SkeletonCard key={i} />)
+          : sortedMachines.map((machine) => (
+              <Link key={machine.id} href={`/product/${machine.id}`} legacyBehavior>
+                <div className="w-full h-96 border border-neutral-300  overflow-hidden">
+                  <div className="w-full h-56 overflow-hidden">
+                    <Image
+                      className="w-full h-full object-contain transform transition-transform hover:scale-105"
+                      src={machine?.imagesrc1 + "1.webp"|| "/black.png"}
+                      width={400}
+                      height={224}
+                      alt={machine?.description || `Slot Machine ${machine.id}`}
+                    />
+                  </div>
+                  <div className="h-full p-3 text-neutral-700 text-center font-bold">
+                    <div className="flex justify-left items-left">
+                      {machine?.designer || `Machine ${machine.id}`}
+                    </div>
+                    <div className="flex justify-left items-left text-neutral-500 text-sm">
+                      {machine?.souscategorie}
+                    </div>
+                    <div className="flex justify-left items-left">
+                      {machine?.price ? `${machine.price} USDT` : "Prix non disponible"}
+                    </div>
+                    <div className="flex justify-left items-left text-sm">
+                      Direct send{" "}
+                      <svg
+                        className="ml-1 mt-1"
+                        width="4%"
+                        height="4%"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M7.5 12L10.5 15L16.5 9M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            ))}
       </div>
     </div>
   );

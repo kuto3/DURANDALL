@@ -9,107 +9,70 @@ const Footer = () => {
   const router = useRouter();
   
   return (
-    <footer className="border-t-2 h-auto mb-9 border-neutral-700 shadow sm:flex-col sm:items-center sm:justify-between antialiased">
+    <footer className="border-t-2 h-max mb-9 border-neutral-300  sm:flex-col sm:items-center sm:justify-between antialiased">
     
     <div className='h-8'></div>
     <div className='flex h-56 w-full'>
-      <div className='w-1/4 flex-col justify-center font-bold  space-y-1'>
+      <div className='w-1/3 flex-col justify-center font-bold  space-y-1'>
         <div className='flex justify-center'>
-          <div>Casino</div>      
+          <div>Virgile</div>      
         </div>
         <div className='flex justify-center'>
-          <button onClick={() => router.push('/games')} className="text-purple-900 underline-offset-2 hover:text-neutral-300">
-            multislots originals
+          <button onClick={() => router.push('/ourconcept')} className="text-yellow-900 underline-offset-2 hover:text-yellow-600">
+            Our Concept
           </button>      
         </div>
         <div className='flex justify-center'>
-          <button onClick={() => router.push('/games')} className="text-purple-900 underline-offset-2 hover:text-neutral-300">
-            slot machine
-          </button>         
+          <button onClick={() => router.push('/ourconcept')} className="text-yellow-900 underline-offset-2 hover:text-yellow-600">
+            Service
+          </button>      
         </div>
-        <div className='flex justify-center'>
-          <button onClick={() => router.push('/games')} className="text-purple-900 underline-offset-2 hover:text-neutral-300">
-            slot machine by the community
-          </button>       
-        </div>
+     
+     
       </div>
 
-      <div className='w-1/4 flex-col justify-center font-bold space-y-1'>
+      <div className='w-1/3 flex-col justify-center font-bold space-y-1'>
         <div className='flex justify-center'>
-          <div>Politics</div>      
+          <div>Buy</div>      
           
         </div>
         <div className='flex justify-center'>
-          <button className="text-purple-900 underline-offset-2 hover:text-neutral-300" onClick={() => router.push('/terms_of_use')}>
-            terms of use
+        <button onClick={() => router.push('/authentification')} className="text-yellow-900 underline-offset-2 hover:text-yellow-600">
+        Our authentication service
           </button>      
         </div>
         <div className='flex justify-center'>
-          <button className="text-purple-900 underline-offset-2 hover:text-neutral-300" onClick={() => router.push('/privacy_policy')}>
-            privacy policy
+        <button onClick={() => router.push('/returnpolicy')} className="text-yellow-900 underline-offset-2 hover:text-yellow-600">
+        Return Policy
           </button>      
-        </div>
-        <div className='flex justify-center'>
-          <button className="text-purple-900 underline-offset-2 hover:text-neutral-300" onClick={() => router.push('/gaming_policy')}>
-            gaming policy
-          </button>      
-        </div>
-        <div className='flex justify-center'>
-          <button className="text-purple-900 underline-offset-2 hover:text-neutral-300" onClick={() => router.push('/kyc-aml-cft_policy')}>
-            kyc-aml-cft policy
-          </button>      
-        </div>
-        <div className='flex justify-center'>
-          <button className="text-purple-900 underline-offset-2 hover:text-neutral-300" onClick={() => router.push('/responsible_gaming')}>
-            responsible gaming
-          </button>  
         </div>
       </div>
 
-      <div className='w-1/4 flex-col justify-center font-bold  space-y-1'>
+      <div className='w-1/3 flex-col justify-center font-bold  space-y-1'>
         <div className='flex justify-center'>
           <div>Customer Service</div>      
         </div>
         <div className='flex justify-center'>
-          <button className="text-purple-900 underline-offset-2 hover:text-neutral-300" onClick={() => router.push('/responsible_gaming')}>
-            about us
+        <button onClick={() => router.push('/contact')} className="text-yellow-900 underline-offset-2 hover:text-yellow-600">
+            Contact
           </button>      
         </div>
         <div className='flex justify-center'>
-          <button className="text-purple-900 underline-offset-2 hover:text-neutral-300" onClick={() => router.push('/responsible_gaming')}>
-            live customer support
+        <button onClick={() => router.push('/contact')} className="text-yellow-900 underline-offset-2 hover:text-yellow-600">
+            Help center
           </button>      
         </div>
         <div className='flex justify-center'>
-          <button className="text-purple-900 underline-offset-2 hover:text-neutral-300" onClick={() => router.push('/responsible_gaming')}>
-            help center
-          </button>      
-        </div>
-        <div className='flex justify-center'>
-          <button className="text-purple-900 underline-offset-2 hover:text-neutral-300" onClick={() => router.push('/responsible_gaming')}>
+        <button onClick={() => router.push('/contact')} className="text-yellow-900 underline-offset-2 hover:text-yellow-600">
             {/* empty div - no text */}
           </button>      
         </div>
       </div>
 
-      <div className='w-1/4 flex-col justify-center font-bold  space-y-1'>
-        <div className='flex justify-center'>
-          <div>Community</div>      
-        </div>
-        <div className='flex justify-center'>
-          <button className="text-purple-900 underline-offset-2 hover:text-neutral-300" onClick={() => router.push('/join_our_program')}>
-            join our program
-          </button>      
-        </div>
-        <div className='flex justify-center'>
-          <button className="text-purple-900 underline-offset-2 hover:text-neutral-300" onClick={() => router.push('/slot_machine')}>
-            slot machine
-          </button>      
-        </div>
-      </div>
+      
 
     </div>
-    <div className='h-4 border-t-2  border-neutral-700 shadow '></div>
+    <div className='h-4 border-t-2  border-neutral-300 '></div>
     <div className='h-10 w-full '>
       <div className='w-1/4 flex h-full justify-center font-bold space-y-1'>
         <div>Token accepted</div>
@@ -118,37 +81,38 @@ const Footer = () => {
     <div className='h-12 w-full'>
       <div className='flex w-full h-full font-bold '>
         <div className='w-24 ml-4'></div>
-        <div className='w-24 rounded-lg bg-neutral-800 flex justify-center items-center border-2 border-neutral-700'>
-          <div className='justify-center flex items-center'>
+        <div className='w-24 rounded-lg bg-neutral-200 flex justify-center items-center '>
+          <div className='justify-center flex items-center space-x-5'>
             <Image
               src="/PNG LIST/8.png"
               layout="intrinsic"
               alt="Logo"
-              height={30}
-              width={30}
+              height={20}
+              width={20}
+              className='mr-2'
             />
-            Solana
+            USDT
           </div>
         </div>
       </div>
     </div>
-    <div className='h-4 mt-9 border-t-2  border-neutral-700 shadow '></div>
+    <div className='h-4 mt-9 border-t-2  border-neutral-300  '></div>
     <div className='flex mt-5 items-center justify-between w-full'>
       <Image
-        src="/MULTISLOT.png"
+        src="/LOGO.png"
         layout="intrinsic"
         alt="Logo"
-        height={200}
-        width={200}
-        className="w-32 h-9 mr-1 ml-1"
+        height={100}
+        width={100}
+        className="w-20 h-6 mr-1 ml-1"
       />
       <p className="mb-4 text-sm text-center text-gray-500 dark:text-gray-400 sm:mb-0">
         <span>
-          Create games on solana, play, win money !
+          A selection of the most prestigious brands in the world.
         </span>
       </p>
       <div className="flex-col justify-center items-center space-x-1">
-        <Link href={"https://x.com/multislotcasino"}>
+        <Link href={"https://x.com/Durandall235383"}>
           <span
             data-tooltip-target="tooltip-twitter"
             className="inline-flex justify-center p-2 text-gray-500 rounded-lg cursor-pointer dark:text-gray-400 dark:hover:text-white hover:text-gray-900 hover:bg-gray-100 dark:hover:bg-gray-600"

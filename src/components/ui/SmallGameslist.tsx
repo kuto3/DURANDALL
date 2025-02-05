@@ -1,132 +1,161 @@
 "use client";
 
-import { useState } from "react";
-import Image from "next/image";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { url } from "inspector";
+import Image from "next/image";
+import { Carousel } from "react-responsive-carousel";
+import "react-responsive-carousel/lib/styles/carousel.min.css";
 
-export default function SmallGamesList() {
-  // Define a static array of slot machines for manual modification
-  const [slotMachines, setSlotMachines] = useState([
-    { id: "1", name: "NUCLEAR", image: "/nuclear.png", url: "/games/nucleargame" },
-    { id: "2", name: "ROCKET", image: "/rockets.png", url: "/games/rocketgame" },
-    { id: "3", name: "BLINKO", image: "/blinko.png", url: "/games/blinkogame" },
-    { id: "4", name: "HORSE GAME", image: "/horses.jpg", url: "/games/horsegame" },
-    { id: "5", name: "DICE", image: "/dice.png", url: "/games/dicegame" },
-    { id: "6", name: "MINE", image: "/mine.jpg", url: "/games/minegame" },
-    { id: "7", name: "ROULETTE", image: "/roulette.jpg", url: "/games/roulettegame" },
-    { id: "8", name: "BLACKJACK", image: "/blackjack5.png", url: "/games/blackjackgame" },
-  ]);
-  
+interface SlotMachine {
+  id: string;
+  url?: string;
+  price?: number;
+  designer?: string;
+  souscategorie?: string;
+  imagesrc1?: string;
+  description?: string;
+}
 
+const SkeletonCard = () => (
+  <div className="w-full h-96 bg-neutral-800 shadow-md animate-pulse">
+    <div className="h-36 w-full rounded-t-lg"></div>
+    <div className="p-3 space-y-2">
+      <div className="h-20 rounded w-3/4"></div>
+      <div className="h-4 rounded w-1/2 bg-gray-700"></div>
+      <div className="h-4 mb-4 rounded w-full bg-gray-700"></div>
+    </div>
+  </div>
+);
+
+export default function SlotMachineCarousel({ name, type, genre, souscategorie, param }) {
+  const [slotMachines, setSlotMachines] = useState<SlotMachine[]>([]);
+  const [loading, setLoading] = useState(true);
   const [currentIndex, setCurrentIndex] = useState(0);
 
-  // Handle next and previous actions with wrap-around for infinite scrolling
-  const nextCard = () => {
-    setCurrentIndex((prevIndex) => (prevIndex + 1) % (slotMachines.length * 3));
-  };
+  useEffect(() => {
+    async function fetchSlotMachines() {
+      try {
+        const response = await fetch(
+          `/api/getProductbyName/${"All"}?type=${""}&genre=${""}&souscategorie=${""}`
+        );
 
-  const prevCard = () => {
-    setCurrentIndex((prevIndex) =>
-      (prevIndex - 1 + slotMachines.length * 3) % (slotMachines.length * 3)
-    );
-  };
-
-  const translateX = () => {
-    return -(currentIndex % slotMachines.length) * 15; // Adjust for card width
-  };
-
-  // Render cards in triplicate for the illusion of infinite scrolling
-  const renderCards = () => {
-    let cards = [];
-    for (let i = 0; i < slotMachines.length * 3; i++) {
-      const index = i % slotMachines.length;
-      const machine = slotMachines[index];
-
-      cards.push(
-        <Link href={machine.url} key={i} className="w-36 h-56 flex-none mx-2">
-          <div className="shadow-md transition-transform transform hover:-translate-y-4 block bg-neutral-800 rounded-lg shadow-md h-56 w-full overflow-hidden relative">
-            <Image
-              className="rounded-t-lg w-full h-full object-cover opacity-80"
-              src={machine.image}
-              width={200}
-              height={200}
-              alt={`Image of ${machine.name}`}
-            />
-            <div className="absolute inset-0 flex items-end justify-center text-white text-lg font-bold">
-              <div className="mb-4">{machine.name}</div>
-            </div>
-          </div>
-        </Link>
-      );
+        if (!response.ok) throw new Error("Failed to fetch data");
+        const data: SlotMachine[] = await response.json();
+        setSlotMachines(data);
+      } catch (err) {
+        console.error("Error fetching slot machines:", err);
+      } finally {
+        setLoading(false);
+      }
     }
-    return cards;
+    fetchSlotMachines();
+  }, [name, type, genre, souscategorie]);
+
+  const sortedMachines = [...slotMachines].sort((a, b) => {
+    const priceA = a.price || 0;
+    const priceB = b.price || 0;
+
+    if (param?.Price === "High to Low") {
+      return priceB - priceA;
+    }
+    if (param?.Price === "Low to High") {
+      return priceA - priceB;
+    }
+    return 0;
+  });
+
+  const limitedMachines = sortedMachines.slice(0, 10);
+  const initialIndex = limitedMachines.length >= 5 ? 4 : 0; // Centrer l'item 5 si possible
+
+  useEffect(() => {
+    setCurrentIndex(initialIndex);
+  }, [limitedMachines.length]);
+
+  const getVisibleSlides = () => {
+    if (typeof window !== "undefined") {
+      const screenWidth = window.innerWidth;
+      if (screenWidth < 640) return 1;
+      if (screenWidth < 1024) return 2;
+      return 4;
+    }
+    return 4; // Default for server-side rendering
   };
 
   return (
-    <div className="bg-black overflow-hidden  w-full">
-      <div className="text-3xl font-semibold text-white text-center mt-9 flex">
-        <div className="flex h-16 justify-start items-center pl-2">
-          <div className="flex">
-          <svg width="7%" height="7%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path d="M5.99989 11H9.99989M7.99989 9V13M14.9999 12H15.0099M17.9999 10H18.0099M10.4488 5H13.5509C16.1758 5 17.4883 5 18.5184 5.49743C19.4254 5.9354 20.179 6.63709 20.6805 7.51059C21.2501 8.5027 21.3436 9.81181 21.5306 12.43L21.7766 15.8745C21.8973 17.5634 20.5597 19 18.8664 19C18.0005 19 17.1794 18.6154 16.6251 17.9502L16.2499 17.5C15.9068 17.0882 15.7351 16.8823 15.5398 16.7159C15.1302 16.3672 14.6344 16.1349 14.1043 16.0436C13.8514 16 13.5834 16 13.0473 16H10.9525C10.4164 16 10.1484 16 9.89553 16.0436C9.36539 16.1349 8.86957 16.3672 8.46 16.7159C8.26463 16.8823 8.09305 17.0882 7.74989 17.5L7.37473 17.9502C6.8204 18.6154 5.99924 19 5.13335 19C3.44013 19 2.1025 17.5634 2.22314 15.8745L2.46918 12.43C2.65619 9.81181 2.7497 8.5027 3.31926 7.51059C3.82074 6.63709 4.57433 5.9354 5.48135 5.49743C6.51151 5 7.82396 5 10.4488 5Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-            <div className="ml-3 text-2xl font-bold">ORIGINAL MULTISLOT GAMES</div>
-          </div>
+    <div className="h-auto p-6">
+      <h1 className="text-3xl text-neutral-200 font-semibold text-white text-center mb-6">
+        Slot Machines
+      </h1>
+      {loading ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+          {Array(4)
+            .fill(0)
+            .map((_, i) => (
+              <SkeletonCard key={i} />
+            ))}
         </div>
-        <div className="h-10 mt-4 w-full flex justify-end">
-          <button
-            className="h-8 w-12 bg-purple-800 hover:bg-purple-950 flex justify-center items-center rounded-lg"
-            onClick={prevCard}
-            style={{ zIndex: 10 }}
-          >
-            <svg
-              width="60%"
-              height="60%"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M15 18L9 12L15 6"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
-          <button
-            className="h-8 w-12 bg-purple-800 hover:bg-purple-950 flex justify-center items-center rounded-lg"
-            onClick={nextCard}
-            style={{ zIndex: 10 }}
-          >
-            <svg
-              width="60%"
-              height="60%"
-              viewBox="0 0 24 24"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M9 18L15 12L9 6"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-          </button>
-        </div>
-      </div>
-
-      <div className="flex justify-center items-center w-full rounded-xl h-56">
-        <div className="relative w-full">
-          <div className="flex" style={{ transform: `translateX(${translateX()}%)` }}>
-            {renderCards()}
-          </div>
-        </div>
-      </div>
+      ) : (
+        <Carousel
+          showArrows={true}
+          showStatus={false}
+          showThumbs={false}
+          showIndicators={false}
+          selectedItem={currentIndex}
+          onChange={setCurrentIndex}
+          centerMode={true}
+          centerSlidePercentage={100 / getVisibleSlides()}
+          infiniteLoop={true}
+          emulateTouch={true}
+        >
+          {limitedMachines.map((machine) => (
+            <div key={machine.id} className="px-2">
+              <Link href={`/product/${machine.id}`} legacyBehavior>
+                <div className="w-full h-96 border border-neutral-300 overflow-hidden cursor-pointer">
+                  <div className="w-full h-56 overflow-hidden">
+                    <Image
+                      className="w-full h-full object-contain transform transition-transform hover:scale-105"
+                      src={machine?.imagesrc1 + "1.webp" || "/black.png"}
+                      width={400}
+                      height={224}
+                      alt={machine?.description || `Slot Machine ${machine.id}`}
+                    />
+                  </div>
+                  <div className="h-full p-3 text-neutral-700 text-center font-bold">
+                    <div className="flex justify-left items-left">
+                      {machine?.designer || `Machine ${machine.id}`}
+                    </div>
+                    <div className="flex justify-left items-left text-neutral-500 text-sm">
+                      {machine?.souscategorie}
+                    </div>
+                    <div className="flex justify-left items-left">
+                      {machine?.price ? `${machine.price} USDT` : "Prix non disponible"}
+                    </div>
+                    <div className="flex justify-left items-left text-sm">
+                      Direct send{" "}
+                      <svg
+                        className="ml-1 mt-1"
+                        width="4%"
+                        height="4%"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M7.5 12L10.5 15L16.5 9M22 12C22 17.5228 17.5228 22 12 22C6.47715 22 2 17.5228 2 12C2 6.47715 6.47715 2 12 2C17.5228 2 22 6.47715 22 12Z"
+                          stroke="currentColor"
+                          strokeWidth="2"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              </Link>
+            </div>
+          ))}
+        </Carousel>
+      )}
     </div>
   );
 }

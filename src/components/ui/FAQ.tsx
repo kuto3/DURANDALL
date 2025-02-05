@@ -10,9 +10,9 @@ const FAQ = () => {
 
       <details className="group [&_summary::-webkit-details-marker]:hidden">
         <summary
-          className="flex cursor-pointer items-center justify-between  rounded-lg p-4 bg-neutral-900 text-white border-2 border-neutral-700"
+          className="flex cursor-pointer items-center justify-between  rounded-lg p-4 bg-white text-black border-2 border-neutral-300"
         >
-          <h2 className="font-medium">How create a casino game?</h2>
+          <h2 className="font-medium">Is the shipping free?</h2>
 
           <svg
             className="size-5 shrink-0 transition duration-300 group-open:-rotate-180"
@@ -25,16 +25,16 @@ const FAQ = () => {
           </svg>
         </summary>
 
-        <p className="mt-4 px-4 leading-relaxed text-gray-200 dark:text-gray-200">
-        go to the create section 
+        <p className="mt-4 px-4 leading-relaxed text-black">
+        No hidden fees, no extra costs—just fast and secure delivery straight to your doorstep
         </p>
       </details>
 
       <details className="group [&_summary::-webkit-details-marker]:hidden">
         <summary
-          className="flex cursor-pointer items-center justify-between rounded-lg bg-neutral-900 p-4 text-white border-2 border-neutral-700"
+            className="flex cursor-pointer items-center justify-between  rounded-lg p-4 bg-white text-black border-2 border-neutral-300"
         >
-          <h2 className="font-medium">Where can i play ?</h2>
+          <h2 className="font-medium">Is the product authentic?</h2>
 
           <svg
             className="size-5 shrink-0 transition duration-300 group-open:-rotate-180"
@@ -47,13 +47,13 @@ const FAQ = () => {
           </svg>
         </summary>
 
-        <p className="mt-4 px-4 leading-relaxed text-gray-200 dark:text-gray-200">
-         Go buy some gems and you ready play in the casino
+        <p className="mt-4 px-4 leading-relaxed text-black">
+        We inspect every piece of luxury clothing we sell to ensure its authenticity. 
         </p>
       </details>
       <details className="group [&_summary::-webkit-details-marker]:hidden">
         <summary
-          className="flex cursor-pointer items-center justify-between rounded-lg  p-4 bg-neutral-900 text-white border-2 border-neutral-700"
+           className="flex cursor-pointer items-center justify-between  rounded-lg p-4 bg-white text-black border-2 border-neutral-300"
         >
           <h2 className="font-medium">What is the project ?</h2>
 
@@ -68,8 +68,8 @@ const FAQ = () => {
           </svg>
         </summary>
 
-        <p className="mt-4 px-4 leading-relaxed text-gray-200 dark:text-gray-200">
-          Make a casino that everyone can own for making the best game possible for fun 
+        <p className="mt-4 px-4 leading-relaxed text-black">
+          Make possible to buy our fovorite luxury items with crypto.
         </p>
       </details>
 

@@ -12,10 +12,26 @@ datasource db {
 }
 
 
-model SlotMachine {
-  id          Int       @id @default(autoincrement()) // Auto-incrementing integer ID
-  url         String
-  createdAt   DateTime  @default(now()) // Date de création
-  updatedAt   DateTime  @updatedAt // Dernière mise à jour
+model Product {
+  id            String   @id @default(uuid())
+  designer      String?  // Ajoute cette ligne si elle manque
+  description   String?
+  size          String?
+  genre         String?
+  categorie     String?
+  souscategorie String?
+  imagesrc1      String?
+  imagesrc2      String?
+  imagesrc3      String?
+  imagesrc4      String?
+  price         Float?
+  etat          String?
+  color       String?
+  vendu       Boolean?
+  matiere       String?
+  url           String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
 }
+
 
